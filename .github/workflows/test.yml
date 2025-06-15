@@ -73,7 +73,7 @@ jobs:
         host: ${{ secrets.VPS_HOST }}
         username: ${{ secrets.VPS_USER }}
         password: ${{ secrets.VPS_PASSWORD }}
-        port: ${{ secrets.VPS_PORT }}
+        port: 58529
         script: |
           docker pull ${{ env.IMAGE_NAME }}:latest
           docker stop cook || true && docker rm cook || true
