@@ -47,6 +47,7 @@ jobs:
     needs: test
     if: github.ref == 'refs/heads/master'
     runs-on: ubuntu-latest
+
     steps:
     - uses: actions/checkout@v3
 
@@ -62,6 +63,19 @@ jobs:
           --build-arg TEST_PROFILE=false \
           -t ${{ env.IMAGE_NAME }}:latest .
 
-    - name: Push to registry
+    - name: Push to Docker Hub
       run: |
         docker push ${{ env.IMAGE_NAME }}:latest
+
+    - name: Deploy to VPS
+      uses: appleboy/ssh-action@v1.0.0
+      with:
+        host: ${{ secrets.VPS_HOST }}
+        username: ${{ secrets.VPS_USER }}
+        password: ${{ secrets.VPS_PASSWORD }}
+        port: ${{ secrets.VPS_PORT }}
+        script: |
+          docker pull ${{ env.IMAGE_NAME }}:latest
+          docker stop cook || true && docker rm cook || true
+          docker run -d --name cook -p 8038:8038 ${{ env.IMAGE_NAME }}:latest
+
