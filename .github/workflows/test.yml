@@ -77,5 +77,5 @@ jobs:
         script: |
           docker pull ${{ env.IMAGE_NAME }}:latest
           docker stop cook || true && docker rm cook || true
-          docker run -d --name cook -p 8038:8038 ${{ env.IMAGE_NAME }}:latest
+          docker run -d --name cook -p 8111:8111 ${{ env.IMAGE_NAME }}:latest
 
