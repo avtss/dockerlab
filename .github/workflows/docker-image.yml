@@ -2,9 +2,9 @@ name: Docker Build, Test and Deploy
 
 on:
   push:
-    branches: [ "master" ]
+    branches: [ "main" ]
   pull_request:
-    branches: [ "master" ]
+    branches: [ "main" ]
 
 jobs:
   build:
@@ -76,9 +76,7 @@ jobs:
       - name: Push tar files and docker-compose.yml on server
         run: |
           scp -P ${{ secrets.SERVER_PORT }} /home/creatior/actions-runner/_work/users-proj/users-proj/image_web.tar ${{ secrets.SERVER_USERNAME }}@${{ secrets.SERVER_ADDRESS}}:/home/${{ secrets.SERVER_USERNAME }}/tasks/docker
-
-      # - name: Clean working directory
-      #   run: rm -rf /home/creatior/docker/images 
+ 
 
       - name: Connect to server and start app
         run: |
