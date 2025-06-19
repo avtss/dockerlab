@@ -68,7 +68,7 @@ jobs:
       
       - name: Connect to server and start app
         run: |
-          ssh -p ${{ secrets.SERVER_PORT }} ${{ secrets.SERVER_USERNAME }}@${{ secrets.SERVER_ADDRESS}} "cd /home/${{ secrets.SERVER_USERNAME }}/tasks/docker && \
+          ssh -p ${{ secrets.SERVER_PORT }} ${{ secrets.SERVER_USERNAME }}@${{ secrets.SERVER_ADDRESS}} "cd /home/${{ secrets.SERVER_USERNAME }}/tasks/dockerlab && \
           podman pull avtss/dockerlab:latest && \
           podman-compose down -v && \
           podman-compose build db web && \
