@@ -5,6 +5,7 @@ from src import models, schemas
 from src.database import init_db, get_db
 
 
+
 app = FastAPI()
 
 @app.on_event("startup")
