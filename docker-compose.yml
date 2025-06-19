@@ -28,7 +28,3 @@
         POSTGRES_DB: kubsu
       ports:
         - "5430:5432"
-      volumes:
-        - postgres:/var/lib/postgresql/data
-  volumes:
-    postgres:
