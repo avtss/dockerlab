@@ -20,7 +20,7 @@ jobs:
       - name: Check existence images
         run: |
           docker image inspect postgres:13-alpine
-          docker image inspect users-proj_web
+          docker image inspect avtss/dockerlab:latest
 
   test:
     name: Testing
@@ -66,18 +66,14 @@ jobs:
         shell: bash
 
     steps:
-      - name: Create tar files
+      - name: Push image to dhub
         run: |
-          docker save -o image_web.tar users-proj_web
-
-      - name: Delete pythonapp image
-        run: docker rmi users-proj_web
+          docker push avtss/dockerlab
       
-      - name: Push tar files and docker-compose.yml on server
-        run: |
-          scp -P ${{ secrets.SERVER_PORT }} /home/creatior/actions-runner/_work/users-proj/users-proj/image_web.tar ${{ secrets.SERVER_USERNAME }}@${{ secrets.SERVER_ADDRESS}}:/home/${{ secrets.SERVER_USERNAME }}/tasks/docker
- 
-
       - name: Connect to server and start app
         run: |
-          ssh -p ${{ secrets.SERVER_PORT }} ${{ secrets.SERVER_USERNAME }}@${{ secrets.SERVER_ADDRESS}} "cd /home/${{ secrets.SERVER_USERNAME }}/tasks/docker && podman-compose down -v && podman load -i image_web.tar && podman-compose up -d && rm image_web.tar"
+          ssh -p ${{ secrets.SERVER_PORT }} ${{ secrets.SERVER_USERNAME }}@${{ secrets.SERVER_ADDRESS}} "cd /home/${{ secrets.SERVER_USERNAME }}/tasks/docker && \
+          podman pull avtss/dockerlab:latest && \
+          podman-compose down -v && \
+          podman-compose build db web && \
+          podman-compose up -d db web"
