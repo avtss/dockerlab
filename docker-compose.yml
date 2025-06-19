@@ -2,7 +2,7 @@
 
   services:
     web:
-      build: 
+      build:
         context: ./python_app
         target: prod
       ports:
