@@ -2,9 +2,7 @@
 
   services:
     web:
-      build:
-        context: ./python_app
-        target: prod
+      image: avtss/dockerlab
       ports:
         - "8038:8000"
       depends_on:
