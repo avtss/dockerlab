@@ -46,4 +46,4 @@ ENV PYTHONPATH="/root/.local/lib/python3.12/site-packages" \
 
 COPY . .
 
-CMD ["uvicorn", "src.main:app", "--host", "0.0.0.0", "--reload"]
+CMD ["uvicorn", "src.main:app", "--host", "0.0.0.0", "--port", "8062", "--reload"]
