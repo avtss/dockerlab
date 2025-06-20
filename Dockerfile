@@ -10,4 +10,4 @@ WORKDIR /app
 COPY --from=builder /app /app
 RUN pip install --no-cache-dir .
 USER appuser
-CMD ["uvicorn", "src.main:app", "--host", "0.0.0.0", "--port", "8016", "--reload"]
+CMD ["uvicorn", "src.main:app", "--host", "0.0.0.0", "--port", "8038", "--reload"]
