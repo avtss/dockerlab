@@ -1,3 +1,6 @@
-python_app/src/__pycache__
-venv
+.idea/
+__pycache__/
+*.py[cod]
+actions-runner/
+
 .env

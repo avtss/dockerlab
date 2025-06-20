@@ -1,30 +1,10 @@
-  version: '3.8'
-
-  services:
-    web:
-      image: avtss/dockerlab
-      ports:
-        - "8038:8000"
-      depends_on:
-        - db
-      environment:
-        - DATABASE_URL=postgresql+psycopg://kubsu:kubsu@db:5432/kubsu
-
-    test:
-      build:
-        context: ./python_app
-        target: test
-      depends_on:
-        - db
-      environment:
-        - DATABASE_URL=postgresql+psycopg://kubsu:kubsu@db:5432/kubsu
-      command: ["python", "-m", "pytest", "tests"]
-
-    db:
-      image: postgres:13-alpine
-      environment:
-        POSTGRES_USER: kubsu
-        POSTGRES_PASSWORD: kubsu
-        POSTGRES_DB: kubsu
-      ports:
-        - "5430:5432"
+services:
+  db:
+    image: postgres:latest
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: kubsu
+      POSTGRES_USER: kubsu
+      POSTGRES_PASSWORD: kubsu
+    ports:
+      - "5432:5432"

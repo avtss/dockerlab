@@ -1,0 +1,68 @@
+name: CI-CD  
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  build-test-deploy: 
+    runs-on: self-hosted 
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Start PostgreSQL container
+        run: |
+          sudo docker run -d --name postgres \
+            -e POSTGRES_DB=kubsu \
+            -e POSTGRES_USER=kubsu \
+            -e POSTGRES_PASSWORD=kubsu \
+            -p 5432:5432 \
+            postgres:14
+          # Ожидание инициализации
+          sleep 10
+
+      - name: Wait for PostgreSQL
+        run: |
+          echo "Waiting for PostgreSQL to start..."
+          until sudo docker exec postgres pg_isready -U kubsu; do
+            sleep 3
+          done
+          echo "PostgreSQL is ready!"
+
+      - name: Build test Docker image
+        run: sudo docker build --target builder -t myapp:test .
+
+      - name: Run tests
+        run: |
+          sudo docker run --rm \
+            --network host \
+            -e PYTHONPATH=/app \
+            myapp:test pytest tests
+
+      - name: Build production Docker image
+        run: sudo docker build -t myapp:final .
+
+      - name: Set up SSH
+        uses: webfactory/ssh-agent@v0.5.4 
+        with:
+          ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
+
+      # Деплой на удаленный сервер
+      - name: Deploy to remote server
+        run: |
+          # Экспорт образа и загрузка на удаленный сервер
+          sudo docker save myapp:final | ssh -o StrictHostKeyChecking=no \
+            -p ${{ secrets.PORT }} \
+            ${{ secrets.USER }}@${{ secrets.HOST }} \
+            "podman load && podman tag myapp:final myapp:final"
+          
+          # Остановка и запуск контейнера
+          ssh -o StrictHostKeyChecking=no \
+            -p ${{ secrets.PORT }} \
+            ${{ secrets.USER }}@${{ secrets.HOST }} \
+            "podman stop myapp || true && \
+             podman rm myapp || true && \
+             podman run -d --name myapp \
+             --network=host \
+             myapp:final"
